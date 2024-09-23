@@ -7,5 +7,7 @@ namespace BookingsApplication.API.Repositories
         Task<List<Event>> getAllEventsAsync();
 
         Task<Event?> getEventByIdAsync(Guid id);
+    
+        // Task<Event> createEventAsync(Event inputEvent); 
     }
 }

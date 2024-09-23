@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using BookingsApplication.API.Models.Domains;
 
 namespace BookingsApplication.API.DTOs
 {
@@ -17,6 +18,6 @@ namespace BookingsApplication.API.DTOs
         public int NumberOfTickets { get; set; }
         public int TotalPrice { get; set; }
 
-        
+        public Event Event{get ; set;}
     }
 }

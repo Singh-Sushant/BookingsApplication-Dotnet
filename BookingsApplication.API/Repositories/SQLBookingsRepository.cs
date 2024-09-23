@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using BookingsApplication.API.Data;
+using BookingsApplication.API.DTOs;
 using BookingsApplication.API.Models.Domains;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookingsApplication.API.Repositories
@@ -43,9 +45,10 @@ namespace BookingsApplication.API.Repositories
             return booking;
         }
 
-        public async Task<List<Booking>?> getBookingsofEventAsync(Guid id)
+        public async Task<List<Booking>?> getUserEventsAsync(string email)
         {
-            var allBookings = await dBcontext.Bookings.Where(x=>x.EventId == id).ToListAsync();
+            var allBookings = await dBcontext.Bookings.Include("Event").Where(x=>x.Email == email).ToListAsync();
+            // var allBookings =  dBcontext.Bookings.Include("Event").AsQueryable();
             
             // check if there are bookings 
             if(allBookings == null || allBookings.Count == 0){

@@ -8,6 +8,7 @@ using BookingsApplication.API.Models.Domains;
 using BookingsApplication.API.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using BookingsApplication.API.CustomActionFilter;
 
 namespace BookingsApplication.API.Controllers
 {
@@ -25,6 +26,7 @@ namespace BookingsApplication.API.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> createBooking([FromBody] BookingRequestDTO bookingRequestDTO )
         {
             var bookingDomainModel = mapper.Map<Booking>(bookingRequestDTO);
@@ -40,9 +42,9 @@ namespace BookingsApplication.API.Controllers
         }   
 
         [HttpGet]
-        [Route("{id}")]
-        public async Task<IActionResult> getBookingsOfEvent([FromRoute] Guid id){
-            var allBookingsOfEvent = await bookingsRepository.getBookingsofEventAsync(id);
+        [Route("{email}")]
+        public async Task<IActionResult> getUserEvents([FromRoute] string email){
+            var allBookingsOfEvent = await bookingsRepository.getUserEventsAsync(email);
             if(allBookingsOfEvent == null){
                 return BadRequest("No bookings for this event available");
             }

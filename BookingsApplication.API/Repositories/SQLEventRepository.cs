@@ -13,6 +13,8 @@ namespace BookingsApplication.API.Repositories
             this.dBcontext = dBcontext;
         }
 
+       
+
         public async Task<List<Event>> getAllEventsAsync()
         {
             return await dBcontext.Events.ToListAsync();
