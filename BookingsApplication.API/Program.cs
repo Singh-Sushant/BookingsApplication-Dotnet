@@ -19,6 +19,14 @@ builder.Services.AddScoped<IBookingsRepository,SQLBookingsRepository>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularApp",
+        policy => policy.WithOrigins("http://localhost:4200") // Replace with your Angular app URL
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
