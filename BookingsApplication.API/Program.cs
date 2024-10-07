@@ -1,4 +1,5 @@
 using System.Text;
+using BookingsApplication.API.CustomActionFilter;
 using BookingsApplication.API.Data;
 using BookingsApplication.API.Mappings;
 using BookingsApplication.API.Models.Domains;
@@ -6,6 +7,7 @@ using BookingsApplication.API.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -32,7 +34,13 @@ builder.Services.AddScoped<IEventRepository,SQLEventRepository>();
 builder.Services.AddScoped<IBookingsRepository,SQLBookingsRepository>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options=>{
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -41,13 +49,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-};
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
 });
+
 builder.Services.AddAuthorization();
 
 
-
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidateModel>();
+});
  
 
 builder.Services.AddCors(options =>
@@ -96,9 +108,9 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 
-var app = builder.Build();
+var app = builder.Build();  
 
-app.MapIdentityApi<IdentityUser>();
+app.MapIdentityApi<User>();
 
 app.UseRouting();
 app.UseHttpsRedirection();

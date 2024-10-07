@@ -8,6 +8,7 @@ namespace BookingsApplication.API.Models.Domains
 {
     public class User : IdentityUser
     {
+        
         public Booking[] bookings { get; set; }
     }
 }

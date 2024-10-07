@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using BookingsApplication.API.CustomActionFilter;
 using BookingsApplication.API.Models.Domains;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BookingsApplication.API.Controllers
@@ -29,11 +32,15 @@ namespace BookingsApplication.API.Controllers
 
         [HttpPost]
         [Route("Register")]
+        [ValidateModel]
         public  async Task<IActionResult> Register([FromBody] RegisterModel model){
             
+            
+
             var user = new User{
                 UserName = model.Email,
-                Email = model.Email
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber
             };
             var result = await userManager.CreateAsync(user , model.Password);
 

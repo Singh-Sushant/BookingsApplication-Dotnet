@@ -31,6 +31,7 @@ namespace BookingsApplication.API.Controllers
         [Authorize]
         public async Task<IActionResult> createBooking([FromBody] BookingRequestDTO bookingRequestDTO )
         {
+            
             var bookingDomainModel = mapper.Map<Booking>(bookingRequestDTO);
             var bookingResult = await bookingsRepository.createBookingAsync(bookingDomainModel); 
 
