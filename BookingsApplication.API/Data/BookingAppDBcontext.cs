@@ -1,11 +1,13 @@
 ﻿using BookingsApplication.API.Models.Domains;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 
 namespace BookingsApplication.API.Data
 {
-    public class BookingAppDBcontext : DbContext
+    public class BookingAppDBcontext : IdentityDbContext<User>
     {
         public BookingAppDBcontext(DbContextOptions<BookingAppDBcontext> dbContextOptions) : base(dbContextOptions)
         {
@@ -14,6 +16,8 @@ namespace BookingsApplication.API.Data
 
         public DbSet<Event> Events { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

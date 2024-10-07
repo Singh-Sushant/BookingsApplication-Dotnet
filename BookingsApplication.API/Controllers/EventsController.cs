@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BookingsApplication.API.DTOs;
 using BookingsApplication.API.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookingsApplication.API.Controllers
@@ -26,6 +27,7 @@ namespace BookingsApplication.API.Controllers
 
             // /api/events
         [HttpGet]
+        //[Authorize]
         public async Task<IActionResult> getAllEvents()
         {
             var allEvents = await eventRepository.getAllEventsAsync();

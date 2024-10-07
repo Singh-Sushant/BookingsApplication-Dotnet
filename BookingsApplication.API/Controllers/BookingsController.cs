@@ -9,6 +9,7 @@ using BookingsApplication.API.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using BookingsApplication.API.CustomActionFilter;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookingsApplication.API.Controllers
 {
@@ -27,6 +28,7 @@ namespace BookingsApplication.API.Controllers
 
         [HttpPost]
         [ValidateModel]
+        [Authorize]
         public async Task<IActionResult> createBooking([FromBody] BookingRequestDTO bookingRequestDTO )
         {
             var bookingDomainModel = mapper.Map<Booking>(bookingRequestDTO);
@@ -43,6 +45,7 @@ namespace BookingsApplication.API.Controllers
 
         [HttpGet]
         [Route("{email}")]
+        [Authorize]
         public async Task<IActionResult> getUserEvents([FromRoute] string email){
             var allBookingsOfEvent = await bookingsRepository.getUserEventsAsync(email);
             if(allBookingsOfEvent == null){
