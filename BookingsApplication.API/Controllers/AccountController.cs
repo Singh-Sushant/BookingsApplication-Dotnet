@@ -57,7 +57,7 @@ namespace BookingsApplication.API.Controllers
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model){
             var user = await userManager.FindByEmailAsync(model.Email);
-            
+             
             // user found 
 
             if(user!= null && await userManager.CheckPasswordAsync(user , model.Password)){
@@ -79,7 +79,9 @@ namespace BookingsApplication.API.Controllers
                 );
 
                 return Ok( new {
-                    Token = new JwtSecurityTokenHandler().WriteToken(token)
+                    Token = new JwtSecurityTokenHandler().WriteToken(token),
+                    email = user.Email,
+                    phoneNumber = user.PhoneNumber
                 });
             }
             return Unauthorized();
