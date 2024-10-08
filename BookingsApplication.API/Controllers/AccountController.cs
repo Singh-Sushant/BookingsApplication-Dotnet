@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using BookingsApplication.API.CustomActionFilter;
+using BookingsApplication.API.Data;
 using BookingsApplication.API.Models.Domains;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +22,12 @@ namespace BookingsApplication.API.Controllers
     {
         private readonly IConfiguration configuration;
         private readonly UserManager<User> userManager;
+        
+        private readonly BookingAppDBcontext dBcontext;
 
-        public AccountController(IConfiguration configuration , UserManager<User> userManager)
+        public AccountController(IConfiguration configuration , UserManager<User> userManager ,BookingAppDBcontext dBcontext)
         {
+            this.dBcontext = dBcontext;
             this.configuration = configuration;
             this.userManager = userManager;
         }
@@ -86,5 +90,45 @@ namespace BookingsApplication.API.Controllers
             }
             return Unauthorized();
         }
+
+
+            [HttpPut]
+            [Route("updatePhone")]
+          public async Task<IActionResult> UpdateUserPhone(string PhoneNumber , string Email){
+
+                if(PhoneNumber.Length != 10){
+                    return BadRequest();
+                }
+
+
+                var user = await userManager.FindByEmailAsync(Email);
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                user.PhoneNumber = PhoneNumber;
+
+                // Update the user in the Identity database
+                var result = await userManager.UpdateAsync(user);
+
+                if (!result.Succeeded)
+                {
+                    return BadRequest(result.Errors);
+                }
+
+                // Update related bookings
+                var bookingList = await dBcontext.Bookings.Where(x => x.Email == Email).ToListAsync();
+                
+                foreach (var booking in bookingList)
+                {
+                    booking.PhoneNumber = PhoneNumber;
+                }
+
+                await dBcontext.SaveChangesAsync();
+
+                return Ok("Phone number updated successfully");
+            }
     }
 }
