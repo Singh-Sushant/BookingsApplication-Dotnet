@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using BookingsApplication.API.CustomActionFilter;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Identity.Client;
 
 namespace BookingsApplication.API.Controllers
 {
@@ -54,5 +55,12 @@ namespace BookingsApplication.API.Controllers
             }
             return Ok(mapper.Map<List<BookingDTO>>(allBookingsOfEvent));
         }   
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> cancelBooking([FromRoute] Guid id){
+            var cancelledBooking = await bookingsRepository.cancelBookingAsync(id);
+            return Ok(mapper.Map<BookingDTO>(cancelledBooking));
+        }
     }
 }

@@ -12,6 +12,8 @@ namespace BookingsApplication.API.Repositories
         Task<Booking?> createBookingAsync(Booking booking);
 
         Task<List<Booking>?> getUserEventsAsync(string email);
+
+        Task<Booking?> cancelBookingAsync(Guid id);
         
     }
 }

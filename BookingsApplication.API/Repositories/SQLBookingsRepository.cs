@@ -22,6 +22,16 @@ namespace BookingsApplication.API.Repositories
             
         }
 
+        public async Task<Booking?> cancelBookingAsync(Guid id)
+        {
+            var booking = await dBcontext.Bookings.FirstOrDefaultAsync(x=>x.Id == id);
+            if(booking == null){
+                return null;
+            }
+            dBcontext.Bookings.Remove(booking);
+            await dBcontext.SaveChangesAsync();
+            return booking;
+        }
 
         public async Task<Booking?> createBookingAsync(Booking booking)
         {
