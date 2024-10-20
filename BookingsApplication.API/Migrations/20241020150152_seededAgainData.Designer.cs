@@ -4,6 +4,7 @@ using BookingsApplication.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingsApplication.API.Migrations
 {
     [DbContext(typeof(BookingAppDBcontext))]
-    partial class BookingAppDBcontextModelSnapshot : ModelSnapshot
+    [Migration("20241020150152_seededAgainData")]
+    partial class seededAgainData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,11 +118,11 @@ namespace BookingsApplication.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("14541995-6496-4013-bc7d-538f9fb3975d"),
+                            Id = new Guid("c861ee0b-7e5b-41e1-9983-188be3927a42"),
                             Artist = "Arijit Singh",
                             AvailableTickets = 10000,
                             Category = "[\"Music\",\"Concert\"]",
-                            DateTime = new DateTime(2024, 11, 20, 20, 53, 3, 795, DateTimeKind.Local).AddTicks(463),
+                            DateTime = new DateTime(2024, 11, 20, 20, 31, 51, 548, DateTimeKind.Local).AddTicks(6390),
                             Description = "A mesmerizing night of Bollywood music featuring Arijit Singh.",
                             EventImage = "[\"https://images.unsplash.com/photo-1533229505515-cbc2deef1f53\",\"https://images.unsplash.com/photo-1494790108377-be9c29b29330\"]",
                             Name = "Bollywood Beats 2024",
@@ -129,11 +132,11 @@ namespace BookingsApplication.API.Migrations
                         },
                         new
                         {
-                            Id = new Guid("e6f521cd-164a-4143-9553-2828cdc23f7e"),
+                            Id = new Guid("19822555-e0f1-4710-ad64-5e05fe658e88"),
                             Artist = "Various Teams",
                             AvailableTickets = 130000,
                             Category = "[\"Sports\",\"Cricket\"]",
-                            DateTime = new DateTime(2025, 6, 20, 20, 53, 3, 796, DateTimeKind.Local).AddTicks(1690),
+                            DateTime = new DateTime(2025, 6, 20, 20, 31, 51, 549, DateTimeKind.Local).AddTicks(7005),
                             Description = "The grand finale of Indian Premier League 2025.",
                             EventImage = "[\"https://images.unsplash.com/photo-1540747913346-19e32dc3e97e\",\"https://images.unsplash.com/photo-1531415074968-036ba1b575da\"]",
                             Name = "IPL Final 2025",
@@ -149,13 +152,10 @@ namespace BookingsApplication.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("AvailableNoOfTickets")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("NoOfTickets")
+                    b.Property<int?>("NoOfTickets")
                         .HasColumnType("int");
 
                     b.Property<int>("Price")

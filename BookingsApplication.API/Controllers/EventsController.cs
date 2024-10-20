@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using BookingsApplication.API.DTOs;
+using BookingsApplication.API.Models.Domains;
 using BookingsApplication.API.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -42,6 +43,26 @@ namespace BookingsApplication.API.Controllers
                 return Ok(mapper.Map<EventDTO>(presentEvent));
             }
             return BadRequest();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> CreateEvent([FromBody] CreateEventDTO createEventDto)
+        {
+            // Validate incoming request
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Map DTO to Domain Model
+            var eventToCreate = mapper.Map<Event>(createEventDto);
+
+            // Call repository to add the event to the database
+            var createdEvent = await eventRepository.createEventAsync(eventToCreate);
+
+            // Return the created event
+            return CreatedAtAction(nameof(getEventById), new { id = createdEvent.Id }, mapper.Map<EventDTO>(createdEvent));
         }
     }
 }

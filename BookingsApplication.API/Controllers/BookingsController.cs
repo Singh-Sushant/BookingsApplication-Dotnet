@@ -58,7 +58,8 @@ namespace BookingsApplication.API.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<IActionResult> cancelBooking([FromRoute] Guid id){
+        [Authorize]
+        public async Task<IActionResult> cancelBooking([FromRoute] Guid id){    
             var cancelledBooking = await bookingsRepository.cancelBookingAsync(id);
             return Ok(mapper.Map<BookingDTO>(cancelledBooking));
         }

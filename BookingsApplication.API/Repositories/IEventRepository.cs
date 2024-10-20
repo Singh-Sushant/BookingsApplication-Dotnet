@@ -8,6 +8,6 @@ namespace BookingsApplication.API.Repositories
 
         Task<Event?> getEventByIdAsync(Guid id);
     
-        // Task<Event> createEventAsync(Event inputEvent); 
+        Task<Event> createEventAsync(Event inputEvent); 
     }
 }

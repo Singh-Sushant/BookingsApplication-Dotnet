@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingsApplication.API.Migrations
 {
     [DbContext(typeof(BookingAppDBcontext))]
-    [Migration("20241006165739_Identity_Migration")]
-    partial class Identity_Migration
+    [Migration("20241020134104_addedNoOfTickets")]
+    partial class addedNoOfTickets
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,6 +74,9 @@ namespace BookingsApplication.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("AvailableTickets")
+                        .HasColumnType("int");
+
                     b.Property<string>("Category")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -85,6 +88,10 @@ namespace BookingsApplication.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("EventImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -92,70 +99,47 @@ namespace BookingsApplication.API.Migrations
                     b.Property<int>("TicketPrice")
                         .HasColumnType("int");
 
+                    b.Property<int>("TotalTickets")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Venue")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Events");
+                    b.HasIndex("UserId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("d290f1ee-6c54-4b01-90e6-d701748f0851"),
-                            Artist = "The Rolling Stones",
-                            Category = "Concert",
-                            DateTime = new DateTime(2024, 10, 15, 19, 30, 0, 0, DateTimeKind.Unspecified),
-                            Description = "An electrifying night with the biggest rock bands!",
-                            Name = "Rock The Night",
-                            TicketPrice = 99,
-                            Venue = "Madison Square Garden, New York"
-                        },
-                        new
-                        {
-                            Id = new Guid("3fa85f64-5717-4562-b3fc-2c963f66afa6"),
-                            Artist = "Dave Chappelle",
-                            Category = "Comedy Show",
-                            DateTime = new DateTime(2024, 11, 5, 18, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "A hilarious stand-up comedy night featuring top comedians.",
-                            Name = "Laugh Riot",
-                            TicketPrice = 49,
-                            Venue = "The Comedy Store, Los Angeles"
-                        },
-                        new
-                        {
-                            Id = new Guid("a34b1f0a-7c5e-4df5-a312-fc90bbd6356d"),
-                            Artist = "London Shakespeare Company",
-                            Category = "Theater",
-                            DateTime = new DateTime(2024, 12, 1, 20, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "A modern rendition of the classic play, Hamlet.",
-                            Name = "Shakespeare's Hamlet",
-                            TicketPrice = 120,
-                            Venue = "The Globe Theatre, London"
-                        },
-                        new
-                        {
-                            Id = new Guid("d81b2f5e-9c1e-4817-b6c5-bc3b146b2177"),
-                            Artist = "Herbie Hancock",
-                            Category = "Concert",
-                            DateTime = new DateTime(2024, 10, 20, 21, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "A smooth jazz evening with international jazz artists.",
-                            Name = "Jazz Vibes",
-                            TicketPrice = 79,
-                            Venue = "Blue Note, Tokyo"
-                        },
-                        new
-                        {
-                            Id = new Guid("e4b1d89f-8272-4a2b-b8b8-2276f497912b"),
-                            Artist = "David Copperfield",
-                            Category = "Magic Show",
-                            DateTime = new DateTime(2024, 10, 31, 19, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "A night of mind-bending magic and illusions.",
-                            Name = "Illusions Unveiled",
-                            TicketPrice = 150,
-                            Venue = "Caesars Palace, Las Vegas"
-                        });
+                    b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("BookingsApplication.API.Models.Domains.TicketType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("NoOfTickets")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("TicketTypes");
                 });
 
             modelBuilder.Entity("BookingsApplication.API.Models.Domains.User", b =>
@@ -371,6 +355,26 @@ namespace BookingsApplication.API.Migrations
                     b.Navigation("Event");
                 });
 
+            modelBuilder.Entity("BookingsApplication.API.Models.Domains.Event", b =>
+                {
+                    b.HasOne("BookingsApplication.API.Models.Domains.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BookingsApplication.API.Models.Domains.TicketType", b =>
+                {
+                    b.HasOne("BookingsApplication.API.Models.Domains.Event", "Event")
+                        .WithMany("TicketTypes")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -420,6 +424,11 @@ namespace BookingsApplication.API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BookingsApplication.API.Models.Domains.Event", b =>
+                {
+                    b.Navigation("TicketTypes");
                 });
 
             modelBuilder.Entity("BookingsApplication.API.Models.Domains.User", b =>

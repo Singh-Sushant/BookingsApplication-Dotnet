@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +23,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<BookingAppDBcontext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("BookingsApplicationConnectionString")));
+options.UseSqlServer(builder.Configuration.GetConnectionString("BookingsApplicationConnectionString"))
+    .ConfigureWarnings(warnings =>
+                warnings.Ignore(RelationalEventId.PendingModelChangesWarning))
+);
 
 // builder.Services.AddDbContext<authDbContext>(options=>
 // options.UseSqlServer(builder.Configuration.GetConnectionString("BookingsApplicationAuthConnectionString")));
@@ -76,6 +81,12 @@ builder.Services.AddCors(options =>
         .SetIsOriginAllowedToAllowWildcardSubdomains();
     });
 });
+
+// remove the pending data changes presnt error Temporarily 
+
+
+           
+
 
 // add swagger 
 

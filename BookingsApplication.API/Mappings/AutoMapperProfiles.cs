@@ -13,6 +13,13 @@ namespace BookingsApplication.API.Mappings
             
             CreateMap<Booking , BookingRequestDTO>().ReverseMap();
             CreateMap<Booking , BookingDTO>().ReverseMap();
+
+             CreateMap<Event, EventDTO>()
+                .ForMember(dest => dest.TicketTypes, opt => opt.MapFrom(src => src.TicketTypes));
+            CreateMap<TicketType, TicketTypeDTO>();
+
+             CreateMap<CreateEventDTO, Event>().ReverseMap();
+            CreateMap<TicketTypeDTO, TicketType>().ReverseMap();
         }
     }
 }

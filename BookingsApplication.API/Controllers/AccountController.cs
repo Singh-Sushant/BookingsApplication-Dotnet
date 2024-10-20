@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using BookingsApplication.API.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookingsApplication.API.Controllers
 {
@@ -39,13 +41,25 @@ namespace BookingsApplication.API.Controllers
         [ValidateModel]
         public  async Task<IActionResult> Register([FromBody] RegisterModel model){
             
-            
+            var existingUser= await userManager.FindByEmailAsync(model.Email);
+
+            if(existingUser != null){
+                return BadRequest(new {
+                    message = "user already exists for this email"
+                });
+            }
 
             var user = new User{
                 UserName = model.Email,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber
             };
+
+            if(user.PhoneNumber.Length != 10){
+                return BadRequest(new {
+                    message = "Phone number not valid "
+                });
+            }
             var result = await userManager.CreateAsync(user , model.Password);
 
             if(result.Succeeded){
@@ -54,7 +68,9 @@ namespace BookingsApplication.API.Controllers
                 });
             }
 
-            return BadRequest(result.Errors);
+            return BadRequest(new{
+               allErrors = result.Errors
+        });
         }
 
         [HttpPost]
@@ -94,11 +110,12 @@ namespace BookingsApplication.API.Controllers
 
             [HttpPut]
             [Route("updatePhone")]
+            [Authorize]
           public async Task<IActionResult> UpdateUserPhone(string PhoneNumber , string Email){
 
                 if(PhoneNumber.Length != 10){
                     return BadRequest();
-                }
+                }  
 
 
                 var user = await userManager.FindByEmailAsync(Email);
@@ -130,5 +147,43 @@ namespace BookingsApplication.API.Controllers
 
                 return Ok("Phone number updated successfully");
             }
+
+
+            [HttpPut]
+            [Route("updatePassword")]
+            public async Task<IActionResult> UpdatePassword([FromBody]  UpdatePasswordDTO updatePasswordDTO)
+            {
+                var user = await userManager.FindByEmailAsync(updatePasswordDTO.Email);
+
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                // Check if the current password is correct
+                var isPasswordCorrect = await userManager.CheckPasswordAsync(user, updatePasswordDTO.CurrentPassword);
+                if (!isPasswordCorrect)
+                {
+                    return BadRequest(new{
+                        message = "current password incorrect",
+                        currentPass= updatePasswordDTO.CurrentPassword
+                    });
+                }
+
+                // Update the password
+                var result = await userManager.ChangePasswordAsync(user, updatePasswordDTO.CurrentPassword, updatePasswordDTO.NewPassword);
+                
+                if (!result.Succeeded)
+                {
+                    
+                    return BadRequest(new{
+                        error = result.Errors,
+                        
+                    });
+                }
+
+                return Ok("Password updated successfully");
+}
+
     }
 }
