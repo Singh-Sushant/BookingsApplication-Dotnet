@@ -27,13 +27,13 @@ namespace BookingsApplication.API.Controllers
 
 
             // /api/events
-        [HttpGet]
-        //[Authorize]
-        public async Task<IActionResult> getAllEvents()
-        {
-            var allEvents = await eventRepository.getAllEventsAsync();
-            return Ok(mapper.Map<List<EventDTO>>(allEvents));
-        }
+        // [HttpGet]
+        // //[Authorize]
+        // public async Task<IActionResult> getAllEvents()
+        // {
+        //     var allEvents = await eventRepository.getAllEventsAsync();
+        //     return Ok(mapper.Map<List<EventDTO>>(allEvents));
+        // }
 
         [HttpGet]
         [Route("{id}")]   
@@ -64,5 +64,33 @@ namespace BookingsApplication.API.Controllers
             // Return the created event
             return CreatedAtAction(nameof(getEventById), new { id = createdEvent.Id }, mapper.Map<EventDTO>(createdEvent));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> getAllEvents([FromQuery] string? category, [FromQuery] string? sortOrder)
+        {
+            // Fetch all events from the repository
+            var allEvents = await eventRepository.getAllEventsAsync();
+
+            // Filter by category if provided
+            if (!string.IsNullOrEmpty(category))
+            {
+                allEvents = allEvents.Where(e => e.Category.Contains(category, StringComparer.OrdinalIgnoreCase)).ToList();
+            }
+
+            // Sort based on the sortOrder parameter (asc or desc)
+            if (!string.IsNullOrEmpty(sortOrder))
+            {
+                allEvents = sortOrder.ToLower() switch
+                {
+                    "asc" => allEvents.OrderBy(e => e.DateTime).ToList(),
+                    "desc" => allEvents.OrderByDescending(e => e.DateTime).ToList(),
+                    _ => allEvents
+                };
+            }
+
+            // Return the filtered and sorted events
+            return Ok(mapper.Map<List<EventDTO>>(allEvents));
+        }
+   
     }
 }
