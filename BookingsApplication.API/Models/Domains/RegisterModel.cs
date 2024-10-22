@@ -19,5 +19,10 @@ namespace BookingsApplication.API.Models.Domains
     [Required(ErrorMessage = "Phone number is required")]
     [RegularExpression(@"^\+?[1-9]\d{1,14}$", ErrorMessage = "Invalid phone number format")]
     public string PhoneNumber { get; set; }
+
+    public string PreferredLanguage { get; set; }
+    public string PreferredCurrency { get; set; }
+
+    public string ProfilePictureUrl { get; set; } = string.Empty;
 }
 }

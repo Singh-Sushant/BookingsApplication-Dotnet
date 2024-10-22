@@ -82,8 +82,8 @@ namespace BookingsApplication.API.Controllers
             {
                 allEvents = sortOrder.ToLower() switch
                 {
-                    "asc" => allEvents.OrderBy(e => e.DateTime).ToList(),
-                    "desc" => allEvents.OrderByDescending(e => e.DateTime).ToList(),
+                    "price" => allEvents.OrderBy(e => e.MinTicketPrice).ToList(),
+                    "date" => allEvents.OrderBy(e => e.DateTime).ToList(),
                     _ => allEvents
                 };
             }

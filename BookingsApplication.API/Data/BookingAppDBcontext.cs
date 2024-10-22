@@ -29,50 +29,50 @@ namespace BookingsApplication.API.Data
 
 
 
-            var events = new List<Event>
-            {
-                new Event
-                {
-                    Id = Guid.NewGuid(),
-                    Category = new[] {"Music", "Concert"},
-                    Name = "Bollywood Beats 2024",
-                    DateTime = DateTime.Now.AddMonths(1),
-                    Venue = "Wankhede Stadium, Mumbai",
-                    TicketPrice = 1000, // Base price, you can adjust this
-                    Artist = "Arijit Singh",
-                    Description = "A mesmerizing night of Bollywood music featuring Arijit Singh.",
-                    TotalTickets = 10000,
-                    AvailableTickets = 10000,
-                    EventImage = new[] {
-                        "https://images.unsplash.com/photo-1533229505515-cbc2deef1f53",
-                        "https://images.unsplash.com/photo-1494790108377-be9c29b29330"
-                    },
-                    // UserId = "dbec629a-c989-419a-941f-8c2082c77130"
-                },
-                // You can add more events here
-                new Event
-                {
-                    Id = Guid.NewGuid(),
-                    Category = new[] {"Sports", "Cricket"},
-                    Name = "IPL Final 2025",    
-                    DateTime = DateTime.Now.AddMonths(8),
-                    Venue = "Narendra Modi Stadium, Ahmedabad",
-                    TicketPrice = 2000,
-                    Artist = "Various Teams",
-                    Description = "The grand finale of Indian Premier League 2025.",
-                    TotalTickets = 130000,
-                    AvailableTickets = 130000,
-                    EventImage = new[] {
-                        "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e",
-                        "https://images.unsplash.com/photo-1531415074968-036ba1b575da"
-                    },
-                    // UserId = "dbec629a-c989-419a-941f-8c2082c77130" 
+            // var events = new List<Event>
+            // {
+            //     new Event
+            //     {
+            //         Id = Guid.NewGuid(),
+            //         Category = new[] {"Music", "Concert"},
+            //         Name = "Bollywood Beats 2024",
+            //         DateTime = DateTime.Now.AddMonths(1),
+            //         Venue = "Wankhede Stadium, Mumbai",
+            //         TicketPrice = 1000, // Base price, you can adjust this
+            //         Artist = "Arijit Singh",
+            //         Description = "A mesmerizing night of Bollywood music featuring Arijit Singh.",
+            //         TotalTickets = 10000,
+            //         AvailableTickets = 10000,
+            //         EventImage = new[] {
+            //             "https://images.unsplash.com/photo-1533229505515-cbc2deef1f53",
+            //             "https://images.unsplash.com/photo-1494790108377-be9c29b29330"
+            //         },
+            //         // UserId = "dbec629a-c989-419a-941f-8c2082c77130"
+            //     },
+            //     // You can add more events here
+            //     new Event
+            //     {
+            //         Id = Guid.NewGuid(),
+            //         Category = new[] {"Sports", "Cricket"},
+            //         Name = "IPL Final 2025",    
+            //         DateTime = DateTime.Now.AddMonths(8),
+            //         Venue = "Narendra Modi Stadium, Ahmedabad",
+            //         TicketPrice = 2000,
+            //         Artist = "Various Teams",
+            //         Description = "The grand finale of Indian Premier League 2025.",
+            //         TotalTickets = 130000,
+            //         AvailableTickets = 130000,
+            //         EventImage = new[] {
+            //             "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e",
+            //             "https://images.unsplash.com/photo-1531415074968-036ba1b575da"
+            //         },
+            //         // UserId = "dbec629a-c989-419a-941f-8c2082c77130" 
 
 
-                }
-            };
+            //     }
+            // };
 
-            modelBuilder.Entity<Event>().HasData(events);
+            // modelBuilder.Entity<Event>().HasData(events);
 
             // Configure relationships
             
