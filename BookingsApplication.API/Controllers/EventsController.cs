@@ -66,10 +66,14 @@ namespace BookingsApplication.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> getAllEvents([FromQuery] string? category, [FromQuery] string? sortOrder)
+        public async Task<IActionResult> getAllEvents([FromQuery] string? category, [FromQuery] string? sortOrder , [FromQuery] string? searchTerm)
         {
             // Fetch all events from the repository
             var allEvents = await eventRepository.getAllEventsAsync();
+
+
+            
+
 
             // Filter by category if provided
             if (!string.IsNullOrEmpty(category))
@@ -86,6 +90,15 @@ namespace BookingsApplication.API.Controllers
                     "date" => allEvents.OrderBy(e => e.DateTime).ToList(),
                     _ => allEvents
                 };
+            }
+
+
+            // Filter by search term 
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                allEvents = allEvents.Where(e =>
+                    e.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    e.Artist.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
             // Return the filtered and sorted events
