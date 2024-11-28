@@ -1,4 +1,5 @@
 using System.Text;
+using api.Service;
 using BookingsApplication.API.CustomActionFilter;
 using BookingsApplication.API.Data;
 using BookingsApplication.API.Mappings;
@@ -13,32 +14,37 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-var builder = WebApplication.CreateBuilder(args);
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-// Add services to the container.
 
+var builder = WebApplication.CreateBuilder(args);
+
+// CORS policy configuration name
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+// Add services to the container
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Database context configuration
 builder.Services.AddDbContext<BookingAppDBcontext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("BookingsApplicationConnectionString"))
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BookingsApplicationConnectionString"))
     .ConfigureWarnings(warnings =>
-                warnings.Ignore(RelationalEventId.PendingModelChangesWarning))
+        warnings.Ignore(RelationalEventId.PendingModelChangesWarning))
 );
 
-// builder.Services.AddDbContext<authDbContext>(options=>
-// options.UseSqlServer(builder.Configuration.GetConnectionString("BookingsApplicationAuthConnectionString")));
+// Identity and authentication setup
+builder.Services.AddIdentityApiEndpoints<User>()
+    .AddEntityFrameworkStores<BookingAppDBcontext>();
 
-builder.Services.AddIdentityApiEndpoints<User>().
-    AddEntityFrameworkStores<BookingAppDBcontext>();
+// Repositories and AutoMapper configuration
+builder.Services.AddScoped<IEventRepository, SQLEventRepository>();
+builder.Services.AddScoped<IBookingsRepository, SQLBookingsRepository>();
+builder.Services.AddScoped<ICartRepository, SQLCartRepository>();
+builder.Services.AddScoped<ICheckoutService, CheckoutService>();
 
-
-builder.Services.AddScoped<IEventRepository,SQLEventRepository>();
-builder.Services.AddScoped<IBookingsRepository,SQLBookingsRepository>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
+// JWT-based authentication configuration
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -58,38 +64,32 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Enable authorization services
 builder.Services.AddAuthorization();
 
-
+// Global action filter configuration
 builder.Services.AddControllers(options =>
-{
+{ 
     options.Filters.Add<ValidateModel>();
 });
- 
 
+// CORS configuration
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name:MyAllowSpecificOrigins, 
-        builder =>
-    {
-        builder.WithOrigins("http://localhost",
-            "http://localhost:4200",
-            "https://localhost:7230",
-            "http://localhost:90")
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .SetIsOriginAllowedToAllowWildcardSubdomains();
-    });
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policyBuilder =>
+        {
+            policyBuilder.WithOrigins("http://localhost",
+                                      "http://localhost:4200",
+                                      "https://localhost:7230",
+                                      "http://localhost:90")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader()
+                          .SetIsOriginAllowedToAllowWildcardSubdomains();
+        });
 });
 
-// remove the pending data changes presnt error Temporarily 
-
-
-           
-
-
-// add swagger 
-
+// Swagger configuration
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "Bookings API", Version = "v1" });
@@ -109,36 +109,45 @@ builder.Services.AddSwaggerGen(option =>
             {
                 Reference = new OpenApiReference
                 {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
                 }
             },
-            new string[]{}
+            new string[] {}
         }
     });
 });
 
+builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        });
 
-var app = builder.Build();  
 
+
+var app = builder.Build();
+
+// Map Identity API endpoints if needed
 app.MapIdentityApi<User>();
 
+// HTTP request pipeline configuration
 app.UseRouting();
 app.UseHttpsRedirection();
 app.UseCors(MyAllowSpecificOrigins);
 
-// Configure the HTTP request pipeline.
+// Development-specific configurations
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
+// Authentication and authorization middleware
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Map API controllers
 app.MapControllers();
 
 app.Run();

@@ -2,6 +2,7 @@
 using BookingsApplication.API.Models.Domains;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 namespace BookingsApplication.API.Models.Domains
 {
     public class Event
@@ -34,7 +35,10 @@ namespace BookingsApplication.API.Models.Domains
             }
         }
 
+        [JsonIgnore]
         public User User {get; set;}
+
+        [JsonIgnore]
         public ICollection<TicketType> TicketTypes { get; set; } 
 
     }

@@ -4,28 +4,37 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace BookingsApplication.API.DTOs
 {
-    public class BookingRequestDTO
+    public  class BookingRequestDTO
     {
         [Required]
-        public string Username { get; set; }    
-        [Required]
-        [DataType(DataType.EmailAddress)]
-        public string Email {  get; set; }
-
-        [MaxLength(10 , ErrorMessage ="Max 10 digits required")]
-        [MinLength(10 , ErrorMessage = "Minimum 10 digits required")]
-        public string PhoneNumber { get; set; }
+        public List<AddBookingItemDto> BookingItems { get; set; } = new List<AddBookingItemDto>();
 
         [Required]
-        [Range(1,100)]
-        public int NumberOfTickets { get; set; }
+        public string BillingName { get; set; } = string.Empty;
 
         [Required]
-        public int TotalPrice { get; set; }
+        [EmailAddress(ErrorMessage = "Invalid email address format.")]
+        public string BillingEmail { get; set; } = string.Empty;
+
+        [Required]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Phone number must be exactly 10 digits.")]
+        public long BillingPhoneNumber { get; set; }
+
+        public string? CouponCode { get; set; }
+
+        [Required]
+        public decimal TotalAmount { get; set; }
 
 
+        [Required]
         public Guid EventId { get; set; }
+
+        [Required]
+        public string Paymentcurrency {get; set; } = "INR";
+
+        
     }
 }

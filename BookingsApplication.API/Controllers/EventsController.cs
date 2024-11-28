@@ -46,6 +46,10 @@ namespace BookingsApplication.API.Controllers
         }
 
 
+
+
+
+
         [HttpPost]
         public async Task<IActionResult> CreateEvent([FromBody] CreateEventDTO createEventDto)
         {

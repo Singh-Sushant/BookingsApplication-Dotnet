@@ -2,18 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using BookingsApplication.API.Models.Domains;
 
 namespace BookingsApplication.API.Repositories
 {
     public interface IBookingsRepository
     {
+        Task<List<Booking>> GetAllAsync(string appUserId);
+        Task<Booking?> GetByIdAsync(Guid id);
+        Task<Booking?> AddBookingAsync(Booking bookingModel, string userId);
 
-        Task<Booking?> createBookingAsync(Booking booking);
+        // Task<List<Booking>?> DeleteAllAsync(int eventId);
 
-        Task<List<Booking>?> getUserEventsAsync(string email);
-
-        Task<Booking?> cancelBookingAsync(Guid id);
-        
+        Task<string?> DeleteByIdAsync(Guid bookingId, string userEmail);
     }
 }

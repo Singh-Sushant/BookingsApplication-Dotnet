@@ -52,8 +52,12 @@ namespace BookingsApplication.API.Controllers
             var user = new User{
                 UserName = model.Email,
                 Email = model.Email,
-                PhoneNumber = model.PhoneNumber
+                PhoneNumber = model.PhoneNumber,
+                PreferredLanguage = model.PreferredLanguage,
+                PreferredCurrency = model.PreferredCurrency,
+                ProfilePictureUrl = model.ProfilePictureUrl
             };
+            
 
             if(user.PhoneNumber.Length != 10){
                 return BadRequest(new {
@@ -74,7 +78,7 @@ namespace BookingsApplication.API.Controllers
         }
 
         [HttpPost]
-        [Route("login")]
+        [Route("login")]    
         public async Task<IActionResult> Login([FromBody] LoginModel model){
             var user = await userManager.FindByEmailAsync(model.Email);
              
@@ -85,7 +89,9 @@ namespace BookingsApplication.API.Controllers
                 var authClaims = new[]
                 {
                    new Claim(JwtRegisteredClaimNames.Sub , user.UserName),
-                   new Claim(JwtRegisteredClaimNames.Jti , Guid.NewGuid().ToString())
+                   new Claim(JwtRegisteredClaimNames.Jti , Guid.NewGuid().ToString()),
+                   new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                   new Claim(ClaimTypes.Email, user.Email)
                 };
 
                 var authSignedKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
@@ -136,12 +142,21 @@ namespace BookingsApplication.API.Controllers
                 }
 
                 // Update related bookings
-                var bookingList = await dBcontext.Bookings.Where(x => x.Email == Email).ToListAsync();
+                var bookingList = await dBcontext.Bookings.Where(x => x.BillingEmail == Email).ToListAsync();
                 
                 foreach (var booking in bookingList)
                 {
-                    booking.PhoneNumber = PhoneNumber;
+                    if (long.TryParse(PhoneNumber, out long parsedPhoneNumber))
+                    {
+                        booking.BillingPhoneNumber = parsedPhoneNumber;
+                    }
+                    else
+                    {
+                        // Handle the case where PhoneNumber is not a valid long value
+                        booking.BillingPhoneNumber = 0; // or another default value
+                    }
                 }
+
 
                 await dBcontext.SaveChangesAsync();
 

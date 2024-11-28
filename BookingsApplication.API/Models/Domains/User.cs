@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace BookingsApplication.API.Models.Domains
@@ -12,6 +14,8 @@ namespace BookingsApplication.API.Models.Domains
         public string PreferredCurrency { get; set; }
 
         public string ProfilePictureUrl { get; set; } = string.Empty;
-        public Booking[] bookings { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<Booking> Bookings {get; set;} = new List<Booking>();
     }
 }

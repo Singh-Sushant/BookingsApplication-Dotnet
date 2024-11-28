@@ -23,6 +23,6 @@ namespace BookingsApplication.API.Models.Domains
     public string PreferredLanguage { get; set; }
     public string PreferredCurrency { get; set; }
 
-    public string ProfilePictureUrl { get; set; } = string.Empty;
+    public string ProfilePictureUrl { get; set; } 
 }
 }
